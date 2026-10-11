@@ -1,5 +1,11 @@
 import unittest
+import sys
+from pathlib import Path
 from datetime import date
+
+# Add the AI engine directory to Python's import path.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
 from planner import generate_daily_plan, reschedule_tasks
 from goal_decomposer import decompose_goal
 from assistant import process_chat_message
