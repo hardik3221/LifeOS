@@ -7,18 +7,25 @@ Standalone Python planning logic for the LifeOS backend. This package does not c
 - No third-party packages required for the deterministic baseline
 
 ## Setup
-From the repository root, create `ai-engine/`, then place these files inside it.
+From the repository root, run the following commands in PowerShell:
 
-```bash
+```powershell
 cd ai-engine
 python -m venv .venv
-# Windows PowerShell:
 .venv\Scripts\Activate.ps1
-# macOS/Linux:
-# source .venv/bin/activate
 pip install -r requirements.txt
 python -m unittest discover -s tests -v
 ```
+
+No third-party packages are currently required. Creating a virtual environment is optional for this standard-library-only version.
+
+To run the tests from the repository root instead:
+
+```powershell
+python -m unittest discover -s ai-engine/tests -v
+```
+
+The test imports currently expect the working directory to be ai-engine, so use the first method if the root-level command reports an import error.
 
 ## Interface
 
