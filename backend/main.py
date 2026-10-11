@@ -10,6 +10,7 @@ from backend.config import Settings
 from backend.database import Base, build_engine
 from backend.routes import tasks, goals, planner
 from backend.services.planner import UnconfiguredPlanner
+from backend.services.ai_adapter import AIEnginePlanner
 
 def create_app(settings: Settings | None = None, planner_service=None) -> FastAPI:
     settings = settings or Settings()
@@ -21,7 +22,7 @@ def create_app(settings: Settings | None = None, planner_service=None) -> FastAP
         engine.dispose()
     app = FastAPI(title="LifeOS API", version="0.1.0", lifespan=lifespan)
     app.state.engine = engine
-    app.state.planner = planner_service if planner_service is not None else UnconfiguredPlanner()
+    app.state.planner = planner_service if planner_service is not None else (AIEnginePlanner() if settings.enable_ai_planner else UnconfiguredPlanner())
     app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins,
                        allow_credentials=False, allow_methods=["GET", "POST", "PATCH", "DELETE"],
                        allow_headers=["Content-Type", "Authorization"])
