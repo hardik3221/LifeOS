@@ -56,3 +56,12 @@ Until injection, `/api/planner/generate` returns HTTP 503. Adapter failures or i
 ## Scope and handoff
 
 See `API_CONTRACT.md` for payloads, responses, dates and errors. The frontend must approve the proposed field names, list format, UUID IDs and timezone policy. Developer 3 must approve the planner window, synchronous protocol, response accounting and preview-only behavior. Multi-user authentication/ownership, versioned migrations, planner persistence and deployment are subsequent MVP work. Keep this prototype on localhost until those requirements are implemented.
+
+
+## Enable the existing AI engine
+
+Developer 3's `ai-engine/` folder currently lives on `feature/ai-planner`, not on this backend branch. **Do not turn on the adapter until the team integrates that folder**. After it is available alongside `backend/`, set `ENABLE_AI_PLANNER=true` in `backend/.env` (or your shell environment) and restart Uvicorn. No additional AI API key is required for the existing deterministic scheduler. The adapter delegates to Developer 3's `generate_daily_plan` function and translates its HH:MM output to the backend's timezone-aware API contract.
+
+When disabled (default), `/api/planner/generate` still responds 503 rather than presenting an invented schedule. The adapter relies on Developer 3 retaining `ai-engine/planner.py` and its `generate_daily_plan(tasks, available_minutes, plan_date, start_time)` interface. Confirm that interface before merging. Run `python -m pytest backend/tests -q` after integration and exercise one real planner API call.
+
+**Integration limitations:** the existing engine only consumes minute-level windows; the adapter rounds the requested start up to the next minute and budgets whole minutes. The scheduler assumes wall-clock HH:MM; use a same-day time window without DST offset changes. Authentication, multi-user isolation, planner persistence and versioned database migrations remain outside this prototype.
